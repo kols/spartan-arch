@@ -7,22 +7,11 @@ set -euo pipefail
 timezone="Asia/Shanghai"
 user=$1
 password=$2
-fast=$3
 
-# setup mirrors
-if [ "$fast" -eq "1"]
-then
-    echo 'Setting up mirrors'
-    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-    sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
-    rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
-else
-    echo 'Skipping mirror ranking because fast'
-fi
+echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
 
 # setup timezone
 echo 'Setting up timezone'
-timedatectl set-ntp true
 ln -s /usr/share/zoneinfo/$timezone /etc/localtime
 timedatectl set-timezone $timezone
 hwclock --systohc
@@ -35,7 +24,7 @@ echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 
 # setup hostname
 echo 'Setting up hostname'
-echo 'arch-virtualbox' > /etc/hostname
+echo 'arch-virtualbox-emacs' > /etc/hostname
 
 # build
 echo 'Building'
