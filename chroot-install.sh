@@ -1,7 +1,10 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # This will be ran from the chrooted env.
 
+timezone="Asia/Shanghai"
 user=$1
 password=$2
 fast=$3
@@ -20,8 +23,8 @@ fi
 # setup timezone
 echo 'Setting up timezone'
 timedatectl set-ntp true
-ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
-timedatectl set-timezone America/New_York
+ln -s /usr/share/zoneinfo/$timezone /etc/localtime
+timedatectl set-timezone $timezone
 hwclock --systohc
 
 # setup locale
@@ -57,7 +60,7 @@ echo 'vboxsf' > /etc/modules-load.d/vboxsf.conf
 
 # install dev envt.
 echo 'Installing dev environment'
-pacman -S --noconfirm git emacs zsh nodejs npm vim wget perl make gcc grep tmux i3 dmenu
+pacman -S --noconfirm git emacs zsh nodejs npm vim wget perl make gcc grep tmux i3 dmenu stow
 pacman -S --noconfirm chromium curl autojump openssh sudo mlocate the_silver_searcher
 pacman -S --noconfirm ttf-hack lxterminal nitrogen ntp dhclient keychain
 pacman -S --noconfirm python-pip go go-tools pkg-config
@@ -86,7 +89,7 @@ echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
 systemctl enable ntpdate.service
 
 # preparing post install
-wget https://raw.githubusercontent.com/abrochard/spartan-arch/master/post-install.sh -O /home/$user/post-install.sh
+wget https://raw.githubusercontent.com/kols/spartan-arch/master/post-install.sh -O /home/$user/post-install.sh
 chown $user:$user /home/$user/post-install.sh
 
 echo 'Done'

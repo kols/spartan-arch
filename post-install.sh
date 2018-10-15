@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Run install.sh first or this will fail due to missing dependencies
 
 # network on boot?
@@ -18,9 +20,9 @@ echo 'exec nitrogen --restore &' >> ~/.xinitrc
 echo 'exec emacs' >> ~/.xinitrc
 
 # emacs config
-git clone https://github.com/abrochard/emacs-config.git
-echo '(load-file "~/emacs-config/bootstrap.el")' > ~/.emacs
-echo '(server-start)' >> ~/.emacs
+git clone https://github.com/kols/dotfiles.git ~/.dotfiles
+cd .dotfiles
+stow -v -R .
 
 # cower & pacaur
 mkdir Downloads
@@ -46,22 +48,6 @@ echo 'XTerm*foreground:white' >> ~/.Xdefaults
 echo 'UXTerm*background:black' >> ~/.Xdefaults
 echo 'UXTerm*foreground:white' >> ~/.Xdefaults
 
-# tmux setup like emacs
-cd
-echo 'unbind C-b' > ~/.tmux.conf
-echo 'set -g prefix C-x' >> ~/.tmux.conf
-echo 'bind C-x send-prefix' >> ~/.tmux.conf
-echo 'bind 2 split-window' >> ~/.tmux.conf
-echo 'bind 3 split-window -h' >> ~/.tmux.conf
-
-# oh-my-zsh
-cd
-rm ~/.zshrc -f
-git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
-sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bira"/' ~/.zshrc
-sed -i 's/plugins=(git)/plugins=(git compleat sudo archlinux emacs autojump common-aliases)/' ~/.zshrc
-
 # environment variable
 echo 'export EDITOR=emacsclient' >> ~/.zshrc
 echo 'export TERMINAL=lxterminal' >> ~/.zshrc
@@ -83,41 +69,9 @@ git config --global user.email $(whoami)@$(hostname)
 git config --global code.editor emacsclient
 echo '    AddKeysToAgent yes' >> ~/.ssh/config
 
-# if there are ssh key
-if [ -d ~/workspace/ssh ]; then
-    if [ -d ~/.ssh ]; then
-        rm -rf ~/.ssh
-    fi
-    ln -s ~/workspace/ssh ~/.ssh
-fi
-
-# wallpaper setup
-cd
-mkdir Pictures
-cd Pictures
-wget https://images2.alphacoders.com/601/601091.jpg -O wallpaper.jpg
-cd ~/.config/
-mkdir nitrogen
-cd nitrogen
-echo '[xin_-1]' > bg-saved.cfg
-echo "file=/home/$(whoami)/Pictures/wallpaper.jpg" >> bg-saved.cfg
-echo 'mode=0' >> bg-saved.cfg
-echo 'bgcolor=#000000' >> bg-saved.cfg
-
-# golang setup
-mkdir ~/go
-GOPATH=$HOME/go
-echo 'export GOPATH=$GOPATH' >> ~/.zshrc
-echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.zshrc
-go get -u github.com/nsf/gocode
-go get -u github.com/rogpeppe/godef
-go get -u golang.org/x/tools/cmd/goimports
-go get -u github.com/jstemmer/gotags
-
-
 # temporary workaround
 cd
-wget https://raw.githubusercontent.com/abrochard/spartan-arch/master/startx.sh -O startx.sh
+wget https://raw.githubusercontent.com/kols/spartan-arch/master/startx.sh -O startx.sh
 chmod +x startx.sh
 echo 'alias startx=~/startx.sh' >> ~/.zshrc
 
