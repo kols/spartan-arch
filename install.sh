@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 if [ -z "$1" ]
 then
     echo "Enter your username: "
