@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 # Run install.sh first or this will fail due to missing dependencies
 
 # network on boot?
